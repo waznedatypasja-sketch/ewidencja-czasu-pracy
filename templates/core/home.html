@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Panel{% endblock %}
+{% block content %}
+<div class="p-3 bg-white rounded shadow-sm">
+  <h1 class="h4 mb-2">Panel</h1>
+  <p class="mb-0">Dziś: <strong>{{ today }}</strong></p>
+  <p class="text-muted mb-3">MVP: RCP, wpisy ręczne, akceptacje, urlopy, raport do wypłat.</p>
+  <div class="d-grid gap-2 d-md-flex">
+    <a class="btn btn-primary" href="{% url 'today' %}">RCP / Dzisiaj</a>
+    <a class="btn btn-outline-primary" href="{% url 'my_entries' %}">Moje wpisy</a>
+    <a class="btn btn-outline-primary" href="{% url 'new_leave' %}">Wniosek urlopowy</a>
+  </div>
+</div>
+{% endblock %}

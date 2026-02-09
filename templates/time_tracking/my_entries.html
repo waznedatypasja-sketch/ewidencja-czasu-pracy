@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Moje wpisy{% endblock %}
+{% block content %}
+<div class="bg-white p-3 rounded shadow-sm">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h1 class="h4 mb-0">Moje wpisy</h1>
+    <a class="btn btn-outline-primary btn-sm" href="{% url 'manual_entry' %}">+ Wpis ręczny</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr><th>Data</th><th>Start</th><th>Koniec</th><th>Przerwa</th><th>Projekt</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for e in entries %}
+          <tr>
+            <td>{{ e.date }}</td>
+            <td>{{ e.start_time|default:"—" }}</td>
+            <td>{{ e.end_time|default:"—" }}</td>
+            <td>{{ e.break_minutes }} min</td>
+            <td>{{ e.project|default:"—" }}</td>
+            <td>
+              <span class="badge {% if e.status == 'APPROVED' %}text-bg-success{% elif e.status == 'REJECTED' %}text-bg-danger{% elif e.status == 'SUBMITTED' %}text-bg-warning{% else %}text-bg-secondary{% endif %}">
+                {{ e.get_status_display }}
+              </span>
+            </td>
+            <td class="text-end">
+              {% if e.status == "DRAFT" or e.status == "REJECTED" %}
+                <form class="d-inline" method="post" action="{% url 'submit_entry' e.id %}">
+                  {% csrf_token %}<button class="btn btn-sm btn-primary">Wyślij</button>
+                </form>
+                {% if e.status == "DRAFT" %}
+                  <form class="d-inline" method="post" action="{% url 'delete_draft' e.id %}" onsubmit="return confirm('Usunąć szkic?')">
+                    {% csrf_token %}<button class="btn btn-sm btn-outline-danger">Usuń</button>
+                  </form>
+                {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+          <tr class="table-light">
+            <td colspan="7">
+              <div class="small"><strong>Komentarz:</strong> {{ e.comment }}</div>
+              {% if e.manager_note %}<div class="small text-danger"><strong>Uwagi przełożonego:</strong> {{ e.manager_note }}</div>{% endif %}
+              {% if e.source == "MANUAL" %}<div class="small text-muted"><strong>Powód wpisu ręcznego:</strong> {{ e.manual_reason }}</div>{% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-muted">Brak wpisów.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Urlopy{% endblock %}
+{% block content %}
+<div class="bg-white p-3 rounded shadow-sm">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h1 class="h4 mb-0">Moje wnioski urlopowe</h1>
+    <a class="btn btn-outline-primary btn-sm" href="{% url 'new_leave' %}">+ Nowy wniosek</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead><tr><th>Typ</th><th>Od</th><th>Do</th><th>Pół dnia</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for l in leaves %}
+          <tr>
+            <td>{{ l.get_leave_type_display }}</td>
+            <td>{{ l.start_date }}</td>
+            <td>{{ l.end_date }}</td>
+            <td>{% if l.half_day %}Tak{% else %}Nie{% endif %}</td>
+            <td><span class="badge {% if l.status == 'APPROVED' %}text-bg-success{% elif l.status == 'REJECTED' %}text-bg-danger{% else %}text-bg-warning{% endif %}">{{ l.get_status_display }}</span></td>
+          </tr>
+          <tr class="table-light"><td colspan="5" class="small">
+            {% if l.comment %}<div><strong>Komentarz:</strong> {{ l.comment }}</div>{% endif %}
+            {% if l.manager_note %}<div class="text-danger"><strong>Uwagi przełożonego:</strong> {{ l.manager_note }}</div>{% endif %}
+          </td></tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-muted">Brak wniosków.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

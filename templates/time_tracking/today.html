@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Dziś{% endblock %}
+{% block content %}
+<div class="bg-white p-3 rounded shadow-sm">
+  <h1 class="h4 mb-3">RCP / Dziś ({{ today }})</h1>
+
+  {% if session %}
+    <div class="alert alert-info">
+      <div><strong>Sesja trwa</strong> od: {{ session.start_dt|date:"H:i" }}</div>
+      <div>Przerwy (min): {{ session.break_minutes }}</div>
+      {% if session.break_start_dt %}<div><span class="badge text-bg-warning">Przerwa trwa</span></div>{% endif %}
+      <div class="mt-2 text-muted">Projekt: {{ session.project|default:"—" }}</div>
+      <div class="mt-1"><strong>Komentarz:</strong> {{ session.comment }}</div>
+    </div>
+
+    <form method="post" action="{% url 'rcp_break_toggle' %}" class="mb-2">
+      {% csrf_token %}
+      <button class="btn btn-outline-warning w-100" type="submit">
+        {% if session.break_start_dt %}Zakończ przerwę{% else %}Rozpocznij przerwę{% endif %}
+      </button>
+    </form>
+
+    <form method="post" action="{% url 'rcp_stop' %}">
+      {% csrf_token %}
+      <button class="btn btn-danger w-100" type="submit">STOP pracy</button>
+    </form>
+
+  {% else %}
+    <div class="alert alert-secondary">
+      <div>Brak aktywnej sesji.</div>
+      <div class="small text-muted">Kliknij START, aby rozpocząć rejestrację.</div>
+    </div>
+
+    <form method="post" action="{% url 'rcp_start' %}">
+      {% csrf_token %}
+      <div class="mb-2">
+        <label class="form-label">Projekt / budowa</label>
+        <select class="form-select" name="project">
+          <option value="">— wybierz (opcjonalnie) —</option>
+          {% for p in projects %}
+            <option value="{{ p.id }}">{{ p }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Nad czym dziś pracujesz? (wymagane)</label>
+        <textarea class="form-control" name="comment" rows="3" placeholder="np. Zbrojenie stropu, montaż płyt GK..." required></textarea>
+        <div class="form-text">Minimum 10 znaków.</div>
+      </div>
+      <button class="btn btn-success w-100" type="submit">START pracy</button>
+    </form>
+  {% endif %}
+
+  {% if entry %}
+    <hr>
+    <h2 class="h6">Wpis dnia</h2>
+    <div class="small">
+      <div>Start: <strong>{{ entry.start_time|default:"—" }}</strong> | Koniec: <strong>{{ entry.end_time|default:"—" }}</strong> | Przerwa: <strong>{{ entry.break_minutes }} min</strong></div>
+      <div>Status: <strong>{{ entry.get_status_display }}</strong></div>
+      <div>Źródło: {{ entry.get_source_display }}</div>
+      <div>Projekt: {{ entry.project|default:"—" }}</div>
+      <div class="mt-1"><strong>Komentarz:</strong> {{ entry.comment }}</div>
+    </div>
+    {% if entry.status == "DRAFT" or entry.status == "REJECTED" %}
+      <form method="post" action="{% url 'submit_entry' entry.id %}" class="mt-2">
+        {% csrf_token %}
+        <button class="btn btn-primary w-100" type="submit">Wyślij do akceptacji</button>
+      </form>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

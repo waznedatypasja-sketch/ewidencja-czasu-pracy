@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Wpis ręczny{% endblock %}
+{% block content %}
+<div class="bg-white p-3 rounded shadow-sm" style="max-width: 720px;">
+  <h1 class="h4 mb-3">Wpis ręczny</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-2">
+      <div class="col-12 col-md-4">{{ form.date.label_tag }}{{ form.date }}</div>
+      <div class="col-6 col-md-4">{{ form.start_time.label_tag }}{{ form.start_time }}</div>
+      <div class="col-6 col-md-4">{{ form.end_time.label_tag }}{{ form.end_time }}</div>
+      <div class="col-12 col-md-4">{{ form.break_minutes.label_tag }}{{ form.break_minutes }}</div>
+      <div class="col-12 col-md-8">{{ form.project.label_tag }}{{ form.project }}</div>
+      <div class="col-12">{{ form.comment.label_tag }}{{ form.comment }}</div>
+      <div class="col-12">{{ form.manual_reason.label_tag }}{{ form.manual_reason }}</div>
+    </div>
+    <div class="text-danger small mt-1">{{ form.errors }}</div>
+    <button class="btn btn-primary mt-3 w-100" type="submit">Zapisz szkic</button>
+  </form>
+</div>
+{% endblock %}

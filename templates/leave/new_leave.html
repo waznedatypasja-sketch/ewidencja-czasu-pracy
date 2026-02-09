@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Nowy wniosek{% endblock %}
+{% block content %}
+<div class="bg-white p-3 rounded shadow-sm" style="max-width: 720px;">
+  <h1 class="h4 mb-3">Nowy wniosek urlopowy / nieobecność</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row g-2">
+      <div class="col-12">{{ form.leave_type.label_tag }}{{ form.leave_type }}</div>
+      <div class="col-6">{{ form.start_date.label_tag }}{{ form.start_date }}</div>
+      <div class="col-6">{{ form.end_date.label_tag }}{{ form.end_date }}</div>
+      <div class="col-12"><div class="form-check mt-2">{{ form.half_day }} {{ form.half_day.label_tag }}</div></div>
+      <div class="col-12">{{ form.comment.label_tag }}{{ form.comment }}</div>
+      <div class="col-12"><label class="form-label">Załącznik (opcjonalnie)</label>{{ form.attachment }}</div>
+    </div>
+    <div class="text-danger small mt-1">{{ form.errors }}</div>
+    <button class="btn btn-primary mt-3 w-100" type="submit">Wyślij wniosek</button>
+  </form>
+</div>
+{% endblock %}

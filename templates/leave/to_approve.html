@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Urlopy do akceptacji{% endblock %}
+{% block content %}
+<div class="bg-white p-3 rounded shadow-sm">
+  <h1 class="h4 mb-3">Wnioski urlopowe do akceptacji</h1>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead><tr><th>Pracownik</th><th>Typ</th><th>Od</th><th>Do</th><th>Pół dnia</th><th></th></tr></thead>
+      <tbody>
+        {% for l in leaves %}
+          <tr>
+            <td>{{ l.user.get_full_name|default:l.user.username }}</td>
+            <td>{{ l.get_leave_type_display }}</td>
+            <td>{{ l.start_date }}</td>
+            <td>{{ l.end_date }}</td>
+            <td>{% if l.half_day %}Tak{% else %}Nie{% endif %}</td>
+            <td class="text-end"><button class="btn btn-sm btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#l{{ l.id }}">Decyzja</button></td>
+          </tr>
+          <tr class="table-light"><td colspan="6" class="small">
+            {% if l.comment %}<div><strong>Komentarz:</strong> {{ l.comment }}</div>{% endif %}
+            <div class="collapse mt-2" id="l{{ l.id }}">
+              <form method="post" action="{% url 'approve_leave' l.id %}" class="mb-2">
+                {% csrf_token %}
+                <label class="form-label small">Uwaga (opcjonalnie)</label>
+                <input class="form-control form-control-sm" name="note">
+                <button class="btn btn-sm btn-success mt-2 w-100">Akceptuj</button>
+              </form>
+              <form method="post" action="{% url 'reject_leave' l.id %}">
+                {% csrf_token %}
+                <label class="form-label small">Powód odrzucenia (wymagany)</label>
+                <input class="form-control form-control-sm" name="note" required>
+                <button class="btn btn-sm btn-danger mt-2 w-100">Odrzuć</button>
+              </form>
+            </div>
+          </td></tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-muted">Brak wniosków.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

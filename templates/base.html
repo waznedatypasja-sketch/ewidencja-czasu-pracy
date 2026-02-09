@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Ewidencja Czasu Pracy{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="manifest" href="{% url 'manifest' %}">
+    <meta name="theme-color" content="#0d6efd">
+  </head>
+  <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="/">Czas Pracy</a>
+        <div class="d-flex gap-2">
+          {% if user.is_authenticated %}
+            <a class="btn btn-sm btn-outline-light" href="{% url 'today' %}">Dziś</a>
+            <a class="btn btn-sm btn-outline-light" href="{% url 'my_entries' %}">Moje wpisy</a>
+            <a class="btn btn-sm btn-outline-light" href="{% url 'my_leaves' %}">Urlopy</a>
+            {% if user.profile.role == "PRZELOZONY" or user.profile.role == "ADMIN" %}
+              <a class="btn btn-sm btn-outline-light" href="{% url 'to_approve' %}">Akceptacje</a>
+              <a class="btn btn-sm btn-outline-light" href="{% url 'leaves_to_approve' %}">Urlopy zespołu</a>
+            {% endif %}
+            {% if user.profile.role == "ADMIN" %}
+              <a class="btn btn-sm btn-warning" href="{% url 'payroll_report' %}">Wypłaty</a>
+              <a class="btn btn-sm btn-outline-light" href="/admin/">Admin</a>
+            {% endif %}
+            <a class="btn btn-sm btn-outline-light" href="{% url 'profile' %}">Profil</a>
+            <a class="btn btn-sm btn-light" href="{% url 'logout' %}">Wyloguj</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-2">{{ message }}</div>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("{% url 'service_worker' %}");
+      }
+    </script>
+  </body>
+</html>

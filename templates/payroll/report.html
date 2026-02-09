@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Wypłaty{% endblock %}
+{% block content %}
+<div class="bg-white p-3 rounded shadow-sm">
+  <h1 class="h4 mb-2">Raport do wypłat</h1>
+  <p class="text-muted mb-3">Liczone tylko z wpisów <strong>zaakceptowanych</strong>. Nadgodziny: > 8h/dzień.</p>
+
+  <form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-6 col-md-2"><label class="form-label">Rok</label><input class="form-control" name="year" value="{{ year }}"></div>
+    <div class="col-6 col-md-2"><label class="form-label">Miesiąc</label><input class="form-control" name="month" value="{{ month }}"></div>
+    <div class="col-12 col-md-3"><button class="btn btn-primary w-100" type="submit">Pokaż</button></div>
+  </form>
+
+  <div class="small text-muted mb-2">Okres: {{ start_d }} – {{ end_d }}</div>
+
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr><th>Pracownik</th><th class="text-end">Stawka</th><th class="text-end">Godziny</th><th class="text-end">Nadgodziny</th><th class="text-end">Podst.</th><th class="text-end">Nadg.</th><th class="text-end">Razem</th></tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+          <tr>
+            <td>{{ r.user.get_full_name|default:r.user.username }}</td>
+            <td class="text-end">{{ r.rate }} zł/h</td>
+            <td class="text-end">{{ r.regular_hours }}</td>
+            <td class="text-end">{{ r.overtime_hours }}</td>
+            <td class="text-end">{{ r.pay_regular }} zł</td>
+            <td class="text-end">{{ r.pay_overtime }} zł</td>
+            <td class="text-end"><strong>{{ r.pay_sum }} zł</strong></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot><tr><th colspan="6" class="text-end">Suma wypłat</th><th class="text-end">{{ total_pay }} zł</th></tr></tfoot>
+    </table>
+  </div>
+</div>
+{% endblock %}
