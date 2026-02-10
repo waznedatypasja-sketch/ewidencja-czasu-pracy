@@ -34,4 +34,5 @@
       else:
           print("Brak DJANGO_SUPERUSER_USERNAME/PASSWORD — nie tworzę admina.")
       PY
-      startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --log-level debug --access-logfile - --error-logfile -
+      startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --log-level debug --access-logfile - --error-logfile - --capture-output
+
